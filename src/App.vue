@@ -4,6 +4,8 @@
       <router-link to="/">Home</router-link>
       |
       <router-link to="/about">About</router-link>
+      |
+      <router-link to="/trips">Trips</router-link>
       <span v-if="!jwt">
         |
         <router-link to="/signup">Signup</router-link>
