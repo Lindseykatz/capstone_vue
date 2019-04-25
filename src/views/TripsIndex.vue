@@ -3,8 +3,8 @@
     <h3>When a user logs in, this page will show all of that user's itineraries, past and upcoming.</h3>
     My Trips:
     <div v-for="trip in trips">
-      <h2>City_id: {{ trip.city_id }}</h2>
-      <p>Name: {{ trip.trip_name }}</p>
+      <h2>City: {{ trip.city }}</h2>
+      <router-link v-bind:to="`/trips/${trip.id}`"> {{ trip.name }}</router-link>
       <p>Start Date: {{ trip.start_date }}</p>
       <p>End Date: {{ trip.end_date }}</p>
     </div>
@@ -26,6 +26,7 @@ export default {
     // JAVASCRIPT WEB REQUEST
     axios.get("/api/trips").then(response => {
       this.trips = response.data;
+      console.log(this.trips);
     });
   },
   methods: {}

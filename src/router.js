@@ -5,6 +5,7 @@ import Signup from "./views/Signup.vue";
 import Login from "./views/Login.vue";
 import Logout from "./views/Logout.vue";
 import Trips from "./views/TripsIndex.vue";
+import Trip from "./views/TripsShow.vue";
 
 Vue.use(Router);
 
@@ -44,6 +45,11 @@ export default new Router({
       path: "/trips",
       name: "trips-index",
       component: Trips
+    },
+    {
+      path: "/trips/:id",
+      name: "trips-show",
+      component: Trip
     }
   ]
 });
