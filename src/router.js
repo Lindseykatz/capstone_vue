@@ -6,6 +6,8 @@ import Login from "./views/Login.vue";
 import Logout from "./views/Logout.vue";
 import Trips from "./views/TripsIndex.vue";
 import Trip from "./views/TripsShow.vue";
+import Attractions from "./views/AttractionsIndex.vue";
+import Attraction from "./views/AttractionsShow.vue";
 
 Vue.use(Router);
 
@@ -50,6 +52,16 @@ export default new Router({
       path: "/trips/:id",
       name: "trips-show",
       component: Trip
+    },
+    {
+      path: "/attractions",
+      name: "attractions-index",
+      component: Attractions
+    },
+    {
+      path: "/attractions/:id",
+      name: "attractions-show",
+      component: Attraction
     }
   ]
 });
