@@ -41,9 +41,8 @@
           <option value="" disabled="disabled" selected="selected"> Select City:</option>
           <option v-for="city in cities" v-bind:value="city.id">{{ city.city_name }}</option>
         </select>
-        <p>(you selected the city id of {{ city_id }})</p>
+        <!-- <p>(you selected the city id of {{ city_id }})</p> -->
       </div>
-      <div></div>
       <input type="submit" value="Create trip" />
     </form>
     <h1>My Trips:</h1>
