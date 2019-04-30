@@ -12,6 +12,20 @@
     </p>
     <p>Description: {{ this.attraction.description }}</p>
     <p>Average Time Spent: {{ this.attraction.average_time_minutes_spent }} minutes</p>
+    <router-link to="/attractions">Back to all attractions</router-link>
+    <div v-if="attraction.user_trips && attraction.user_trips.length > 0">
+      Current user trips: {{ attraction.user_trips }}
+
+      <!-- <input type="text" placeholder="Enter a valid trip id" v-model="tripId"> -->
+      <select v-model="tripId">
+        <option value="" disabled="disabled" selected="selected"> Add to my itinerary:</option>
+        <option v-for="trip in attraction.user_trips" v-bind:value="trip.id">{{ trip.trip_name }}</option>
+      </select>
+
+      <input type="datetime-local" v-model="startDateTime" />
+
+      <button v-on:click="addItineraryItem()">Add to my itinerary</button>
+    </div>
 
     <!-- TODO: Add users' comments and pictures -->
     <!-- TODO: Add button to add this attraction to my itinerary. Must be logged in in order for this button to work. -->
@@ -22,7 +36,9 @@ import axios from "axios";
 export default {
   data: function() {
     return {
-      attraction: {}
+      attraction: {},
+      tripId: "",
+      startDateTime: ""
     };
   },
   created: function() {
@@ -31,6 +47,33 @@ export default {
       console.log(this.attraction);
     });
   },
-  methods: {}
+  methods: {
+    addItineraryItem: function() {
+      console.log("addItineraryItem");
+      var params = {
+        attraction_id: this.$route.params.id,
+        start_datetime: this.startDateTime,
+        trip_id: this.tripId
+      };
+      axios
+        .post("/api/itinerary_items", params)
+        .then(response => {
+          // this.attraction.push(response.data);
+          // console.log(this.trip.itinerary_items);
+          console.log("successfully created itinerary_item", response.data);
+          // this.startDateTime = "";
+          // this.attraction_id = this.$route.params.id;
+          this.$router.push("/trips/" + this.tripId);
+        })
+        .catch(error => {
+          console.log(error.response.data.errors);
+        });
+      // TODO: add in web request, similar to TripsShow
+      // If not logged in - prompt an error asking the user to log in
+      // If logged in - pull up a dropdown box of the users itineraries
+      //  If user picks itinerary with different city id - prompt an error telling the user that the cities don't match
+      //  If user picks itinerary with same city id - pull up the date time box
+    }
+  }
 };
 </script>
