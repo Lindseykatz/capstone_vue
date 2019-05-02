@@ -1,36 +1,68 @@
 <template>
-  <div class="attractions-show">
-    <h3>
-      This page shows the details for a specific attraction. This will show all comments and pictures. Also, there will
-      be a button to add this attraction to a user's itinerary.
-    </h3>
-    <h2>{{ this.attraction.name }}</h2>
-    <img v-bind:src="this.attraction.main_image_url" v-bind:alt="attraction.name" />
-    <p>
-      Address: {{ this.attraction.street_address }}, {{ this.attraction.city_name }}, {{ this.attraction.state }}
-      {{ this.attraction.country }} {{ this.attraction.postal_code }}
-    </p>
-    <p>Description: {{ this.attraction.description }}</p>
-    <p>Average Time Spent: {{ this.attraction.average_time_minutes_spent }} minutes</p>
-    <router-link to="/attractions">Back to all attractions</router-link>
-    <div v-if="attraction.user_trips && attraction.user_trips.length > 0">
-      Current user trips: {{ attraction.user_trips }}
-
-      <!-- <input type="text" placeholder="Enter a valid trip id" v-model="tripId"> -->
-      <select v-model="tripId">
-        <option value="" disabled="disabled" selected="selected"> Add to my itinerary:</option>
-        <option v-for="trip in attraction.user_trips" v-bind:value="trip.id">{{ trip.trip_name }}</option>
-      </select>
-
-      <input type="datetime-local" v-model="startDateTime" />
-
-      <button v-on:click="addItineraryItem()">Add to my itinerary</button>
+  <div>
+    <div class="home">
+      <div class="background_image" style="background-image:url(/images/destination_9.jpg)">
+        <div class="home_slider_content_container">
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <div class="home_slider_content">
+                  <div class="home_title"><h2>Attractions</h2></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- TODO: Add users' comments and pictures -->
-    <!-- TODO: Add button to add this attraction to my itinerary. Must be logged in in order for this button to work. -->
+    <!-- Search -->
+
+    <!-- About -->
+
+    <div class="about">
+      <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <div class="attractions-show">
+              <h3>
+                This page shows the details for a specific attraction. This will show all comments and pictures. Also,
+                there will be a button to add this attraction to a user's itinerary.
+              </h3>
+              <h2>{{ this.attraction.name }}</h2>
+              <img v-bind:src="this.attraction.main_image_url" v-bind:alt="attraction.name" />
+              <p>
+                Address: {{ this.attraction.street_address }}, {{ this.attraction.city_name }},
+                {{ this.attraction.state }} {{ this.attraction.country }} {{ this.attraction.postal_code }}
+              </p>
+              <p>Description: {{ this.attraction.description }}</p>
+              <p>Average Time Spent: {{ this.attraction.average_time_minutes_spent }} minutes</p>
+              <router-link to="/attractions">Back to all attractions</router-link>
+              <div v-if="attraction.user_trips && attraction.user_trips.length > 0">
+                Current user trips: {{ attraction.user_trips }}
+
+                <!-- <input type="text" placeholder="Enter a valid trip id" v-model="tripId"> -->
+                <select v-model="tripId">
+                  <option value="" disabled="disabled" selected="selected"> Add to my itinerary:</option>
+                  <option v-for="trip in attraction.user_trips" v-bind:value="trip.id">{{ trip.trip_name }}</option>
+                </select>
+
+                <input type="datetime-local" v-model="startDateTime" />
+
+                <button v-on:click="addItineraryItem()">Add to my itinerary</button>
+              </div>
+
+              <!-- TODO: Add users' comments and pictures -->
+              <!-- TODO: Add button to add this attraction to my itinerary. Must be logged in in order for this button to work. -->
+            </div>
+          </div>
+        </div>
+        <div class="row about_row"></div>
+      </div>
+    </div>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 export default {

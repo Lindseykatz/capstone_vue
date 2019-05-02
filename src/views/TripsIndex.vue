@@ -1,59 +1,91 @@
 <template>
-  <div class="trips-index">
-    <h3>When a user logs in, this page will show all of that user's itineraries, past and upcoming.</h3>
-    <h1>New Trip</h1>
-    <!--     <ul>
+  <div>
+    <div class="home">
+      <div class="background_image" style="background-image:url(images/news.jpg)"></div>
+      <div class="home_slider_content_container">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="home_slider_content">
+                <div class="home_title"><h2>Trips</h2></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about">
+      <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <div class="trips">
+              <div class="trips-index">
+                <h5></h5>
+                <h3>New Trip</h3>
+                <!--     <ul>
       <li v-for="error in errors">{{ error }}</li>
     </ul> -->
-    <form v-on:submit.prevent="createTrip()">
-      <div>
-        Trip Name:
-        <input type="text" v-model="newTripName" />
-        Trip Dates:
-        <div class="datepicker-trigger">
-          <input
-            type="text"
-            id="datepicker-trigger"
-            placeholder="Select dates"
-            :value="formatDates(dateOne, dateTwo)"
-          />
+                <form v-on:submit.prevent="createTrip()">
+                  <div>
+                    Trip Name:
+                    <input type="text" v-model="newTripName" />
 
-          <AirbnbStyleDatepicker
-            :trigger-element-id="'datepicker-trigger'"
-            :mode="'range'"
-            :fullscreen-mobile="true"
-            :date-one="dateOne"
-            :date-two="dateTwo"
-            @date-one-selected="
-              val => {
-                dateOne = val;
-              }
-            "
-            @date-two-selected="
-              val => {
-                dateTwo = val;
-              }
-            "
-          />
+                    Trip Dates:
+                    <div class="datepicker-trigger">
+                      <input
+                        type="text"
+                        id="datepicker-trigger"
+                        placeholder="Select dates"
+                        :value="formatDates(dateOne, dateTwo)"
+                      />
+
+                      <AirbnbStyleDatepicker
+                        :trigger-element-id="'datepicker-trigger'"
+                        :mode="'range'"
+                        :fullscreen-mobile="true"
+                        :date-one="dateOne"
+                        :date-two="dateTwo"
+                        @date-one-selected="
+                          val => {
+                            dateOne = val;
+                          }
+                        "
+                        @date-two-selected="
+                          val => {
+                            dateTwo = val;
+                          }
+                        "
+                      />
+                    </div>
+                    City:
+                    <select v-model="city_id">
+                      <option value="" disabled="disabled" selected="selected"> Select City:</option>
+                      <option v-for="city in cities" v-bind:value="city.id">{{ city.city_name }}</option>
+                    </select>
+                    <!-- <p>(you selected the city id of {{ city_id }})</p> -->
+                  </div>
+                  <input type="submit" value=" Create new trip " />
+                </form>
+                <h3>{{ current_user.first_name }} Upcoming Trips:</h3>
+                <!-- TODO: Add Past Trips, Upcoming Trips -->
+                <div v-for="trip in trips">
+                  <h4>
+                    <router-link v-bind:to="`/trips/${trip.id}`"> {{ trip.name }}</router-link>
+                  </h4>
+                  <p>City: {{ trip.city }}</p>
+                  <p>From: {{ trip.start_date }} to {{ trip.end_date }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        City:
-        <select v-model="city_id">
-          <option value="" disabled="disabled" selected="selected"> Select City:</option>
-          <option v-for="city in cities" v-bind:value="city.id">{{ city.city_name }}</option>
-        </select>
-        <!-- <p>(you selected the city id of {{ city_id }})</p> -->
       </div>
-      <input type="submit" value="Create trip" />
-    </form>
-    <h1>My Trips:</h1>
-    <div v-for="trip in trips">
-      <h2>City: {{ trip.city }}</h2>
-      <router-link v-bind:to="`/trips/${trip.id}`"> {{ trip.name }}</router-link>
-      <p>Start Date: {{ trip.start_date }}</p>
-      <p>End Date: {{ trip.end_date }}</p>
+      <div class="row about_row"></div>
     </div>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 import format from "date-fns/format";
@@ -67,6 +99,7 @@ export default {
       dateFormat: "D MMM",
       dateOne: "",
       dateTwo: "",
+      current_user: "",
       cities: [{ id: 1, city_name: "Chicago" }, { id: 2, city_name: "Barcelona" }]
     };
   },

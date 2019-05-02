@@ -1,36 +1,66 @@
 <template>
-  <div class="trips-show">
-    <h3>
-      When a user clicks on a specific trip, this page will show the activities in that trip.
-    </h3>
-    <h2>{{ this.trip.name }}</h2>
-    <h2>Start Date: {{ this.trip.start_date }}</h2>
-    <h2>End Date: {{ this.trip.end_date }}</h2>
-    <div v-for="itinerary_item in trip.itinerary_items">
-      <h3>Attraction: {{ itinerary_item.attraction_name }}</h3>
-      <p>Start Date & Time: {{ itinerary_item.start_datetime }}</p>
-      <!--       <router-link v-bind:to="`/itinerary_item/${itinerary_item.id}/edit`">Edit</router-link> -->
+  <div>
+    <div class="home">
+      <div class="background_image" style="background-image:url(/images/destination_6.jpg)"></div>
+      <div class="home_slider_content_container">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="home_slider_content">
+                <div class="home_title"><h2>Trips</h2></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <h4>Add New Itinerary Item:</h4>
-    <form v-on:submit.prevent="createItineraryItem()">
-      <div>
-        Attraction:
-        <select v-model="AttractionId">
-          <option value="" disabled="disabled" selected="selected"> Select Attraction:</option>
-          <option v-for="city_attraction in trip.city_attractions" v-bind:value="city_attraction.id">
-            {{ city_attraction.name }}
-          </option>
-        </select>
-        <!--         <p>(you selected the attraction id of {{ AttractionId }})</p> -->
+    <div class="about">
+      <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <div class="trips">
+              <div class="trips-show">
+                <h3>
+                  When a user clicks on a specific trip, this page will show the activities in that trip.
+                </h3>
+                <h2>{{ this.trip.name }}</h2>
+                <h2>Start Date: {{ this.trip.start_date }}</h2>
+                <h2>End Date: {{ this.trip.end_date }}</h2>
+                <div v-for="itinerary_item in trip.itinerary_items">
+                  <h3>Attraction: {{ itinerary_item.attraction_name }}</h3>
+                  <p>Start Date & Time: {{ itinerary_item.start_datetime }}</p>
+                  <!--       <router-link v-bind:to="`/itinerary_item/${itinerary_item.id}/edit`">Edit</router-link> -->
+                </div>
 
-        Start Date & Time:
-        <input type="datetime-local" v-model="newStartDateTime" />
+                <h4>Add New Itinerary Item:</h4>
+                <form v-on:submit.prevent="createItineraryItem()">
+                  <div>
+                    Attraction:
+                    <select v-model="AttractionId">
+                      <option value="" disabled="disabled" selected="selected"> Select Attraction:</option>
+                      <option v-for="city_attraction in trip.city_attractions" v-bind:value="city_attraction.id">
+                        {{ city_attraction.name }}
+                      </option>
+                    </select>
+                    <!--         <p>(you selected the attraction id of {{ AttractionId }})</p> -->
+
+                    Start Date & Time:
+                    <input type="datetime-local" v-model="newStartDateTime" />
+                  </div>
+                  <input type="submit" value="Add itinerary item to trip" />
+                </form>
+                <!-- TODO: Add map out my itinerary -->
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <input type="submit" value="Add itinerary item to trip" />
-    </form>
+    </div>
+    <div class="row about_row"></div>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 
@@ -50,6 +80,9 @@ export default {
       console.log(this.trip.city_attractions);
     });
   },
+  // mounted: function() {
+  //   setupTheme();
+  // },
   methods: {
     createItineraryItem: function() {
       var params = {

@@ -1,21 +1,42 @@
 <template>
-  <div class="login">
-    <div class="container">
-      <form v-on:submit.prevent="submit()">
-        <h1>Login</h1>
-        <ul>
-          <li class="text-danger" v-for="error in errors">{{ error }}</li>
-        </ul>
-        <div class="form-group">
-          <label>Email:</label>
-          <input type="email" class="form-control" v-model="email" />
+  <div>
+    <!-- Header -->
+
+    <!-- Home -->
+
+    <div class="home">
+      <div class="background_image" style="background-image:url(images/destination_9.jpg)">
+        <div class="home_slider_content_container">
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <div class="home_slider_content">
+                  <div class="home_title"><h2>Login</h2></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Password:</label>
-          <input type="password" class="form-control" v-model="password" />
-        </div>
-        <input type="submit" class="btn btn-primary" value="Submit" />
-      </form>
+      </div>
+    </div>
+
+    <div class="login">
+      <div class="container">
+        <form v-on:submit.prevent="submit()">
+          <ul>
+            <li class="text-danger" v-for="error in errors">{{ error }}</li>
+          </ul>
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" class="form-control" v-model="email" />
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+            <input type="password" class="form-control" v-model="password" />
+          </div>
+          <input type="submit" class="btn btn-primary" value="Submit" />
+        </form>
+      </div>
     </div>
   </div>
 </template>
