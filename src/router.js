@@ -8,6 +8,7 @@ import Trips from "./views/TripsIndex.vue";
 import Trip from "./views/TripsShow.vue";
 import Attractions from "./views/AttractionsIndex.vue";
 import Attraction from "./views/AttractionsShow.vue";
+import Map from "./views/test.vue";
 
 Vue.use(Router);
 
@@ -62,6 +63,11 @@ export default new Router({
       path: "/attractions/:id",
       name: "attractions-show",
       component: Attraction
+    },
+    {
+      path: "/test",
+      name: "map",
+      component: Map
     }
   ]
 });

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="schedule">
     <vue-cal
       :time-from="0 * 60"
       :time-to="24 * 60"
