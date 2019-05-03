@@ -14,6 +14,27 @@
         </div>
       </div>
     </div>
+    <!-- TODO: current have to refresh the page for this to work - fix this!  -->
+    <a
+      v-if="trip.city_id === 1"
+      class="weatherwidget-io"
+      href="https://forecast7.com/en/41d88n87d63/chicago/?unit=us"
+      data-label_1="CHICAGO"
+      data-label_2="WEATHER"
+      data-icons="Climacons Animated"
+      data-theme="original"
+      >CHICAGO WEATHER</a
+    >
+    <a
+      v-if="trip.city_id === 2"
+      class="weatherwidget-io"
+      href="https://forecast7.com/en/41d392d17/barcelona/"
+      data-label_1="BARCELONA"
+      data-label_2="WEATHER"
+      data-icons="Climacons Animated"
+      data-theme="original"
+      >BARCELONA WEATHER</a
+    >
 
     <div class="about">
       <div class="container">
@@ -73,6 +94,7 @@
       <!-- 
     <v-btn @click="customEventCreation">button</v-btn> -->
     </div>
+
     <div id="map"></div>
   </div>
 </template>
@@ -193,6 +215,18 @@ export default {
         "top-left"
       );
     });
+
+    console.log("mounted TripsShow");
+    !(function(d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (!d.getElementById(id)) {
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://weatherwidget.io/js/widget.min.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }
+    })(document, "script", "weatherwidget-io-js");
   },
   // mounted: function() {
   //   setupTheme();
