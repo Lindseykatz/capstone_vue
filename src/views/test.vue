@@ -20,8 +20,7 @@
   <body>
     <div id="map"></div>
     <script>
-      mapboxgl.accessToken =
-        "pk.eyJ1IjoibGthdHo5MiIsImEiOiJjanVkYXJ4MWMweDZzNDNwYm9hMWJoMTIwIn0.yDMZYqEuy8w4xIEWIGYzvw";
+      mapboxgl.accessToken = "";
       var map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v10",

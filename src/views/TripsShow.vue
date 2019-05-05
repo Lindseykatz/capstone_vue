@@ -94,9 +94,20 @@
       <!-- 
     <v-btn @click="customEventCreation">button</v-btn> -->
     </div>
-    <button v-on:click="getDirections()" class="btn btn-primary">Get Directions</button>
+    <button v-on:click="getDirections('2019-06-01')" class="btn btn-primary">Get Directions</button>
+    <!-- <div id="trip_steps">Directions: {{ getDirections() }}</div> -->
 
     <div id="map"></div>
+    <div id="instructions">
+      <div v-if="steps.length > 0">
+        <h3>Distance</h3>
+        <p>{{ (distance / 1609.344).toFixed(2) }} miles</p>
+        <h3>Steps</h3>
+        <ul>
+          <li v-for="step in steps">{{ step }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -152,6 +163,30 @@
 #map {
   height: 400px;
 }
+
+.mapboxgl-popup {
+  max-width: 200px;
+}
+
+#instructions {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 360px;
+  margin: 20px;
+  width: 25%;
+
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  overflow-y: scroll;
+  font-family: sans-serif;
+  font-size: 0.8em;
+  line-height: 2em;
+}
+
+.duration {
+  font-size: 2em;
+}
 </style>
 
 <script>
@@ -168,6 +203,8 @@ export default {
       map: null,
       mapboxClient: null,
       trip: {},
+      steps: [],
+      distance: "",
       AttractionId: "",
       newStartDateTime: "",
       selectedEvent: {},
@@ -299,12 +336,18 @@ export default {
         .then(response => {
           if (response && response.body && response.body.features && response.body.features.length) {
             var feature = response.body.features[0];
-            new mapboxgl.Marker().setLngLat(feature.center).addTo(this.map);
+            var marker = new mapboxgl.Marker().setLngLat(feature.center).addTo(this.map);
             attraction.center = feature.center;
+            var popup = new mapboxgl.Popup({ offset: 25 }).setText(attraction.name);
+            new mapboxgl.Marker()
+              .setLngLat(feature.center)
+              .setPopup(popup) // sets a popup on this marker
+              .addTo(this.map);
           }
+          console.log("itinerary items", this.trip.itinerary_items);
         });
     },
-    getDirections: function() {
+    getDirections: function(inputDate) {
       console.log(this.trip.itinerary_items);
       // write a loop through this.trip.itinerary_items
       // build a string of lat/longs in this format:
@@ -314,14 +357,17 @@ export default {
       //
       var latlngs = [];
       this.trip.itinerary_items.forEach(itineraryItem => {
-        latlngs.push(`${itineraryItem.center}`);
+        if (true) {
+          // change this to check if itineraryItem's date matches the inputDate
+          latlngs.push(`${itineraryItem.center}`);
+        }
       });
       console.log(latlngs.join(";"));
       axios
         .get(
-          `https://api.mapbox.com/directions/v5/mapbox/walking/${latlngs.join(";")}?geometries=geojson&access_token=${
-            process.env.VUE_APP_MAP_API_KEY
-          }`
+          `https://api.mapbox.com/directions/v5/mapbox/walking/${latlngs.join(
+            ";"
+          )}?geometries=geojson&steps=true&access_token=${process.env.VUE_APP_MAP_API_KEY}`
         )
         .then(response => {
           console.log("directions response", response.data);
@@ -398,6 +444,27 @@ export default {
 
             console.log("the route is set?", this.map.getSource("route"));
           }
+          response.data.routes[0].legs.forEach(leg =>
+            leg.steps.forEach(step => this.steps.push(step.maneuver.instruction))
+          );
+          this.distance = response.data.routes[0].distance;
+          // loop through response.data.routes[0].legs.forEach(leg => { ... })
+          // do a second loop through leg.steps.forEach(step => { ... step.maneuver.instruction ... })
+
+          // var instructions = document.getElementById("instructions");
+          // var steps = this.data.legs[0].steps;
+
+          // var tripInstructions = [];
+          // for (var i = 0; i < steps.length; i++) {
+          //   tripInstructions.push("<br><li>" + steps[i].maneuver.instruction) + "</li>";
+          //   instructions.innerHTML =
+          //     '<br><span class="duration">Trip duration: ' +
+          //     Math.floor(this.data.duration / 60) +
+          //     " min 🚴 </span>" +
+          //     tripInstructions;
+          //   console.log("trip instructions", this.tripInstructions);
+          // }
+          // get the sidebar and add the instructions
         });
     },
     customEventCreation(event) {
