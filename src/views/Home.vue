@@ -62,41 +62,43 @@
             <div class="home_search_container">
               <div class="home_search_title">Search for your trip</div>
               <div class="home_search_content">
-                <form action="#" class="home_search_form" id="home_search_form">
-                  <div class="d-flex flex-lg-row align-items-start justify-content-lg-between justify-content-start">
-                    <input type="text" class="search_input search_input_1" placeholder="City" required="required" />
-                    <button class="home_search_button">search attractions</button>
-                    <!-- TODO: Take you to Attractions page where the city is searched -->
-                    <div class="datepicker-trigger">
-                      <input
-                        type="text"
-                        id="datepicker-trigger"
-                        placeholder="Select dates"
-                        :value="formatDates(dateOne, dateTwo)"
-                      />
+                <div class="d-flex flex-lg-row align-items-start justify-content-lg-between justify-content-start">
+                  City:
+                  <input type="text" class="search_input search_input_1" placeholder="Enter city" required="required" />
+                  <button v-on:click="`/attractions`" class="attraction_search_button">
+                    search attractions
+                  </button>
+                  <!-- TODO: Take you to Attractions page where the city is searched -->
+                  <div class="datepicker-trigger">
+                    Dates:
+                    <input
+                      type="text"
+                      id="datepicker-trigger"
+                      placeholder="Select dates"
+                      :value="formatDates(dateOne, dateTwo)"
+                    />
 
-                      <AirbnbStyleDatepicker
-                        :trigger-element-id="'datepicker-trigger'"
-                        :mode="'range'"
-                        :fullscreen-mobile="true"
-                        :date-one="dateOne"
-                        :date-two="dateTwo"
-                        @date-one-selected="
-                          val => {
-                            dateOne = val;
-                          }
-                        "
-                        @date-two-selected="
-                          val => {
-                            dateTwo = val;
-                          }
-                        "
-                      />
-                    </div>
-                    <button class="home_search_button">create itinerary</button>
-                    <!-- TODO: Take you to the Itinerary create page where the city is already created -->
+                    <AirbnbStyleDatepicker
+                      :trigger-element-id="'datepicker-trigger'"
+                      :mode="'range'"
+                      :fullscreen-mobile="true"
+                      :date-one="dateOne"
+                      :date-two="dateTwo"
+                      @date-one-selected="
+                        val => {
+                          dateOne = val;
+                        }
+                      "
+                      @date-two-selected="
+                        val => {
+                          dateTwo = val;
+                        }
+                      "
+                    />
                   </div>
-                </form>
+                  <button class="itinerary_search_button">create itinerary</button>
+                  <!-- TODO: Take you to the Itinerary create page where the city is already created -->
+                </div>
               </div>
             </div>
           </div>

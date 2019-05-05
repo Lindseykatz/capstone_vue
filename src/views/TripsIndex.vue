@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="home">
-      <div class="background_image" style="background-image:url(images/news.jpg)"></div>
+      <div class="background_image" style="background-image:url(/plane.jpeg)"></div>
       <div class="home_slider_content_container">
         <div class="container">
           <div class="row">
@@ -67,15 +67,30 @@
                   </div>
                   <input type="submit" value=" Create new trip " />
                 </form>
-                <h3>{{ current_user.first_name }} Upcoming Trips:</h3>
+                <h3>Trips:</h3>
+                  <div v-for="trip in trips">
+                    <div class="card-deck" >
+                      <div class="card mb-4">
+                        <img class="card-img-top" v-if="trip.city_id === 1" src="chicago.jpg" alt="Card image cap" />
+                        <img class="card-img-top" v-if="trip.city_id === 2" src="barcelona.jpg" alt="Card image cap" />
+                        <div class="card-text">
+                          <router-link v-bind:to="`/trips/${trip.id}`"> {{ trip.name }}</router-link>
+                        <p class="card-text">
+                          <ul>City: {{ trip.city }}</ul>
+                          <ul>From: {{ trip.start_date }} to {{ trip.end_date }}</ul>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <!-- TODO: Add Past Trips, Upcoming Trips -->
-                <div v-for="trip in trips">
+<!--                 <div v-for="trip in trips">
                   <h4>
                     <router-link v-bind:to="`/trips/${trip.id}`"> {{ trip.name }}</router-link>
                   </h4>
                   <p>City: {{ trip.city }}</p>
                   <p>From: {{ trip.start_date }} to {{ trip.end_date }}</p>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>

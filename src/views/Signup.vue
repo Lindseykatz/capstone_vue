@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="home">
-      <div class="background_image" style="background-image:url(images/destination_2.jpg)">
+      <div class="background_image" style="background-image:url(mountain.jpeg)">
         <div class="home_slider_content_container">
           <div class="container">
             <div class="row">

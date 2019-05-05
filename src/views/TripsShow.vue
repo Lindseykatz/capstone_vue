@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="home">
-      <div class="background_image" style="background-image:url(/images/destination_6.jpg)"></div>
+      <div class="background_image" style="background-image:url(/greece.jpeg)"></div>
       <div class="home_slider_content_container">
         <div class="container">
           <div class="row">
@@ -94,6 +94,7 @@
       <!-- 
     <v-btn @click="customEventCreation">button</v-btn> -->
     </div>
+    <button v-on:click="getDirections()" class="btn btn-primary">Get Directions</button>
 
     <div id="map"></div>
   </div>
@@ -154,7 +155,7 @@
 </style>
 
 <script>
-/* global mapboxgl, MapboxDirections */
+/* global mapboxgl, MapboxDirections, mapboxSdk */
 
 import axios from "axios";
 import VueCal from "vue-cal";
@@ -164,6 +165,8 @@ export default {
   components: { VueCal },
   data: function() {
     return {
+      map: null,
+      mapboxClient: null,
       trip: {},
       AttractionId: "",
       newStartDateTime: "",
@@ -195,25 +198,65 @@ export default {
   mounted: function() {
     axios.get("/api/trips/" + this.$route.params.id).then(response => {
       this.trip = response.data;
-      console.log(this.trip);
+      // console.log(this.trip);
       console.log(this.trip.itinerary_items);
-      console.log(this.trip.city_attractions);
+      // console.log(this.trip.city_attractions);
+      // console.log("thing???", this.trip.city_attractions.full_address);
 
-      console.log(process.env.VUE_APP_MAP_API_KEY);
+      // console.log(process.env.VUE_APP_MAP_API_KEY);
       mapboxgl.accessToken = process.env.VUE_APP_MAP_API_KEY;
+      var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
+      // geocode the city address, then make the map
       var map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v11",
         center: [-87.6244, 41.8756],
         zoom: 13
       });
+      this.map = map;
+      this.mapboxClient = mapboxClient;
 
-      map.addControl(
-        new MapboxDirections({
-          accessToken: mapboxgl.accessToken
-        }),
-        "top-left"
-      );
+      this.trip.itinerary_items.forEach(attraction => {
+        this.addAttractionToMap(attraction);
+      });
+
+      // this.mapboxDirections = new MapboxDirections({
+      //   accessToken: mapboxgl.accessToken
+      // });
+      // map.addControl(this.mapboxDirections, "top-left");
+
+      // mapboxClient.geocoding
+      //        .forwardGeocode({
+      //          query: this.location.address,
+      //          autocomplete: true,
+      //          limit: 1
+      //        })
+      //        .send()
+      //        .then(function(response) {
+      //          if (response && response.body && response.body.features && response.body.features.length) {
+      //            var feature = response.body.features[0];
+
+      //            var map = new mapboxgl.Map({
+      //              container: "map",
+      //              style: "mapbox://styles/mapbox/streets-v11",
+      //              center: feature.center,
+      //              zoom: 15,
+      //              interactive: false
+      //            });
+      //            // map.addControl(
+      //            //   new MapboxDirections({
+      //            //     accessToken: mapboxgl.accessToken
+      //            //   }),
+      //            //   "top-left"
+      //            // );
+      //            new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
+
+      //       // map.addControl(
+      //       //   new MapboxDirections({
+      //       //     accessToken: mapboxgl.accessToken
+      //       //   }),
+      //       //   "top-left"
+      //       // );
     });
 
     console.log("mounted TripsShow");
@@ -246,6 +289,117 @@ export default {
     }
   },
   methods: {
+    addAttractionToMap: function(attraction) {
+      this.mapboxClient.geocoding
+        .forwardGeocode({
+          query: attraction.full_address,
+          autocomplete: false
+        })
+        .send()
+        .then(response => {
+          if (response && response.body && response.body.features && response.body.features.length) {
+            var feature = response.body.features[0];
+            new mapboxgl.Marker().setLngLat(feature.center).addTo(this.map);
+            attraction.center = feature.center;
+          }
+        });
+    },
+    getDirections: function() {
+      console.log(this.trip.itinerary_items);
+      // write a loop through this.trip.itinerary_items
+      // build a string of lat/longs in this format:
+      // var latlngs = ""
+      // loop
+      //   latlngs += lat + "," + lng + ";"
+      //
+      var latlngs = [];
+      this.trip.itinerary_items.forEach(itineraryItem => {
+        latlngs.push(`${itineraryItem.center}`);
+      });
+      console.log(latlngs.join(";"));
+      axios
+        .get(
+          `https://api.mapbox.com/directions/v5/mapbox/walking/${latlngs.join(";")}?geometries=geojson&access_token=${
+            process.env.VUE_APP_MAP_API_KEY
+          }`
+        )
+        .then(response => {
+          console.log("directions response", response.data);
+          // this.getRoute(latlngs);
+
+          var data = response.data.routes[0];
+          var route = data.geometry.coordinates;
+          var geojson = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "LineString",
+              coordinates: route
+            }
+          };
+          // if the route already exists on the map, reset it using setData
+          if (this.map.getSource("route")) {
+            console.log("reset route", geojson);
+            this.map.getSource("route").setData(geojson);
+          } else {
+            // otherwise, make a new request
+            console.log("make new request?", geojson);
+            this.map.addLayer({
+              id: "route",
+              type: "line",
+              source: {
+                type: "geojson",
+                data: {
+                  type: "Feature",
+                  properties: {},
+                  geometry: {
+                    type: "LineString",
+                    coordinates: data.geometry.coordinates
+                  }
+                }
+              },
+              layout: {
+                "line-join": "round",
+                "line-cap": "round"
+              },
+              paint: {
+                "line-color": "#3887be",
+                "line-width": 5,
+                "line-opacity": 0.75
+              }
+            });
+
+            console.log("first coordinates", data.geometry.coordinates[0]);
+
+            this.map.addLayer({
+              id: "point",
+              type: "circle",
+              source: {
+                type: "geojson",
+                data: {
+                  type: "FeatureCollection",
+                  features: [
+                    {
+                      type: "Feature",
+                      properties: {},
+                      geometry: {
+                        type: "Point",
+                        coordinates: data.geometry.coordinates[0]
+                      }
+                    }
+                  ]
+                }
+              },
+              paint: {
+                "circle-radius": 10,
+                "circle-color": "#3887be"
+              }
+            });
+
+            console.log("the route is set?", this.map.getSource("route"));
+          }
+        });
+    },
     customEventCreation(event) {
       const date = prompt("Create event on (YYYY-mm-dd)", "2018-11-20");
       // Check if date format is correct.
@@ -269,6 +423,7 @@ export default {
         console.log(this.trip.itinerary_items);
         this.AttractionId = "";
         this.newStartDateTime = "";
+        this.addAttractionToMap(response.data);
       });
     }
   }

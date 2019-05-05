@@ -51,7 +51,7 @@
     </div>
   </div>
 </template>
-
+<!-- TODO: Show 10 attractions on a page at a time -->
 <script>
 import axios from "axios";
 export default {
