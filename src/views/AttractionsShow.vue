@@ -25,10 +25,6 @@
         <div class="row">
           <div class="col text-center">
             <div class="attractions-show">
-              <h3>
-                This page shows the details for a specific attraction. This will show all comments and pictures. Also,
-                there will be a button to add this attraction to a user's itinerary.
-              </h3>
               <h2>{{ this.attraction.name }}</h2>
               <img v-bind:src="this.attraction.main_image_url" v-bind:alt="attraction.name" />
               <p>
@@ -39,11 +35,11 @@
               <p>Average Time Spent: {{ this.attraction.average_time_minutes_spent }} minutes</p>
               <router-link to="/attractions">Back to all attractions</router-link>
               <div v-if="attraction.user_trips && attraction.user_trips.length > 0">
-                Current user trips: {{ attraction.user_trips }}
+                <!--                 Current user trips: {{ attraction.user_trips }} -->
 
                 <!-- <input type="text" placeholder="Enter a valid trip id" v-model="tripId"> -->
                 <select v-model="tripId">
-                  <option value="" disabled="disabled" selected="selected"> Add to my itinerary:</option>
+                  <option value="" disabled="disabled" selected="selected"> My itinerary:</option>
                   <option v-for="trip in attraction.user_trips" v-bind:value="trip.id">{{ trip.trip_name }}</option>
                 </select>
 

@@ -28,10 +28,13 @@
     </ul> -->
                 <form v-on:submit.prevent="createTrip()">
                   <div>
-                    Trip Name:
-                    <input type="text" v-model="newTripName" />
-
-                    Trip Dates:
+                    <ul>
+                    <li> Trip Name:
+                      <li>
+                      <input type="text" v-model="newTripName" />
+                    </li>
+                    </li>
+                    <li> Trip Dates:
                     <div class="datepicker-trigger">
                       <input
                         type="text"
@@ -58,14 +61,21 @@
                         "
                       />
                     </div>
+                    </li>
+                    <li>
                     City:
+                  </li>
+                  <li>
                     <select v-model="city_id">
                       <option value="" disabled="disabled" selected="selected"> Select City:</option>
                       <option v-for="city in cities" v-bind:value="city.id">{{ city.city_name }}</option>
                     </select>
                     <!-- <p>(you selected the city id of {{ city_id }})</p> -->
-                  </div>
+                  </li>
+                </ul>
+                                  </div>
                   <input type="submit" value=" Create new trip " />
+
                 </form>
                 <h3>Trips:</h3>
                   <div v-for="trip in trips">
