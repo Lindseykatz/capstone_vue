@@ -33,7 +33,7 @@
                       <li>
                       <input type="text" v-model="newTripName" />
                       </li>
-                    <li> Trip Dates:
+                    <li> Dates:
                     <div class="datepicker-trigger">
                       <input
                         type="text"

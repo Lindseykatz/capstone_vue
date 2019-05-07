@@ -39,8 +39,10 @@
 
                 <!-- <input type="text" placeholder="Enter a valid trip id" v-model="tripId"> -->
                 <select v-model="tripId">
-                  <option value="" disabled="disabled" selected="selected"> My itinerary:</option>
-                  <option v-for="trip in attraction.user_trips" v-bind:value="trip.id">{{ trip.trip_name }}</option>
+                  <option value="" disabled="disabled" selected="selected"> Choose itinerary</option>
+                  <option v-for="trip in attraction.user_trips" v-bind:value="trip.id"
+                    >{{ trip.trip_name }}: {{ trip.start_date }} to {{ trip.end_date }}
+                  </option>
                 </select>
 
                 <input type="datetime-local" v-model="startDateTime" />
