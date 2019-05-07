@@ -42,20 +42,19 @@
           <div class="col text-center">
             <div class="trips">
               <div class="trips-show">
-                <h2>{{ this.trip.name }}</h2>
-                <h2>{{ this.trip.start_date }} to {{ this.trip.end_date }}</h2>
-                <div v-for="itinerary_item in trip.itinerary_items">
+                <h2>{{ this.trip.name }}: {{ this.trip.start_date }} to {{ this.trip.end_date }}</h2>
+                <!--                 <div v-for="itinerary_item in trip.itinerary_items">
                   <h3>Attraction: {{ itinerary_item.attraction_name }}</h3>
-                  <p>Start Date & Time: {{ itinerary_item.start_datetime }}</p>
-                  <!--       <router-link v-bind:to="`/itinerary_item/${itinerary_item.id}/edit`">Edit</router-link> -->
-                </div>
+                  <p>Start Date & Time: {{ itinerary_item.start_datetime }}</p> -->
+                <!--       <router-link v-bind:to="`/itinerary_item/${itinerary_item.id}/edit`">Edit</router-link>
+                </div> -->
 
-                <h4>Add New Itinerary Item:</h4>
+                <h4>Add New Event:</h4>
                 <form v-on:submit.prevent="createItineraryItem()">
                   <div>
                     Attraction:
                     <select v-model="AttractionId">
-                      <option value="" disabled="disabled" selected="selected"> Select Attraction:</option>
+                      <option value="" disabled="disabled" selected="selected"> </option>
                       <option v-for="city_attraction in trip.city_attractions" v-bind:value="city_attraction.id">
                         {{ city_attraction.name }}
                       </option>
@@ -65,7 +64,7 @@
                     Start Date & Time:
                     <input type="datetime-local" v-model="newStartDateTime" />
                   </div>
-                  <input type="submit" value="Add itinerary item to trip" />
+                  <input type="submit" value="Add to itinerary" />
                 </form>
                 <!-- TODO: Add map out my itinerary -->
               </div>
@@ -612,17 +611,13 @@ export default {
       this.selectedEvent = event;
       this.showDialog = true;
 
-      // Prevent navigating to narrower view (default vue-cal behavior).
       e.stopPropagation();
     },
     updateStartTime: function() {
-      console.log("Event's start date", this.selectedEvent);
       var itineraryItem = this.itineraryItems.filter(itineraryItem => {
         console.log("i found this", itineraryItem.title === this.selectedEvent.title, "; ", this.selectedEvent);
         return itineraryItem.title === this.selectedEvent.title;
       });
-
-      console.log("Event's start date", this.selectedEvent.startDate + " " + this.selectedEvent.startTime);
       var params = {
         start_datetime: this.selectedEvent.startDate + " " + this.selectedEvent.startTime
       };
@@ -630,6 +625,35 @@ export default {
         console.log("you updated the start time of this event");
         this.selectedEvent = response.data;
         //TODO: need to figure out how to update page without refreshing...
+      });
+    },
+    updateEndTime: function() {
+      var itineraryItem = this.itineraryItems.filter(itineraryItem => {
+        return itineraryItem.title === this.selectedEvent.title;
+      });
+
+      var params = {
+        end_datetime: this.selectedEvent.endDate + " " + this.selectedEvent.endTime
+      };
+      axios.patch("/api/itinerary_items/" + this.selectedEvent.id, params).then(response => {
+        console.log("you updated the end time of this event");
+        this.selectedEvent = response.data;
+        // TODO: need to figure out how to update page without refreshing...
+      });
+    },
+    updateStartDate: function() {
+      var itineraryItem = this.itineraryItems.filter(itineraryItem => {
+        console.log("i found this", itineraryItem.title === this.selectedEvent.title, "; ", this.selectedEvent);
+        return itineraryItem.title === this.selectedEvent.title;
+      });
+      var params = {
+        start_datetime: this.selectedEvent.startDate + " " + this.selectedEvent.startTime,
+        end_datetime: this.selectedEvent.startDate + " " + this.selectedEvent.endTime
+      };
+      axios.patch("/api/itinerary_items/" + this.selectedEvent.id, params).then(response => {
+        console.log("you updated the start date of this event");
+        this.selectedEvent = response.data;
+        // TODO: need to figure out how to update page without refreshing...
       });
     }
   }
