@@ -43,8 +43,7 @@
             <div class="trips">
               <div class="trips-show">
                 <h2>{{ this.trip.name }}</h2>
-                <h2>Start Date: {{ this.trip.start_date }}</h2>
-                <h2>End Date: {{ this.trip.end_date }}</h2>
+                <h2>{{ this.trip.start_date }} to {{ this.trip.end_date }}</h2>
                 <div v-for="itinerary_item in trip.itinerary_items">
                   <h3>Attraction: {{ itinerary_item.attraction_name }}</h3>
                   <p>Start Date & Time: {{ itinerary_item.start_datetime }}</p>
@@ -90,9 +89,33 @@
         @cell-click="selectedDate('cell-click', $event)"
         @event-duration-change="durationChange('event-duration-change', $event)"
         @event-delete="deleteEvent('event-delete', $event)"
+        :on-event-click="onEventClick"
       >
-        >
+        > >
       </vue-cal>
+
+      <v-dialog v-model="showDialog">
+        <v-card>
+          <v-card-title>
+            <strong>{{ selectedEvent.title }}</strong>
+            <v-spacer />
+            <span>{{ selectedEvent.startDate }}</span>
+            <input type="text" v-model="selectedEvent.startDate" />
+            <button v-on:click="updateStartDate()">Update date</button>
+          </v-card-title>
+          <v-card-text>
+            <ul>
+              <li>From {{ selectedEvent.startTime }} to {{ selectedEvent.endTime }}</li>
+              <li>Starts at:</li>
+              <input type="text" v-model="selectedEvent.startTime" />
+              <button v-on:click="updateStartTime()">Update start time</button>
+              <li>Ends at:</li>
+              <input type="text" v-model="selectedEvent.endTime" />
+              <button v-on:click="updateEndTime()">Update end time</button>
+            </ul>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
       <!-- 
     <v-btn @click="customEventCreation">button</v-btn> -->
     </div>
@@ -117,6 +140,18 @@
 <style>
 .vuecal__event {
   cursor: pointer;
+}
+.vuecal__event-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 4px 0 8px;
+}
+
+.vuecal__event-time {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 .vuecal__menu,
 .vuecal__cell-events-count {
@@ -246,8 +281,8 @@ export default {
         console.log("Itemmmm ", item);
         let newItem = { id: item.id };
 
-        let startDate = item.start_datetime.split("T")[0] + " " + item.start_datetime.split("T")[1];
-        newItem["start"] = startDate;
+        let startTimeDate = item.start_datetime.split("T")[0] + " " + item.start_datetime.split("T")[1];
+        newItem["start"] = startTimeDate;
 
         let formattedEndDate = "";
         if (item.end_datetime == null) {
@@ -540,6 +575,7 @@ export default {
     durationChange: function(eventName, event) {
       var itineraryItem = this.itineraryItems.filter(itineraryItem => {
         return itineraryItem.title === event.title;
+        // TODO: fix this so that the title and the start date are the same
       });
       console.log("i found this", itineraryItem);
       var params = {
@@ -571,6 +607,30 @@ export default {
         event = response.data;
       });
       console.log(eventName, ": ", event);
+    },
+    onEventClick(event, e) {
+      this.selectedEvent = event;
+      this.showDialog = true;
+
+      // Prevent navigating to narrower view (default vue-cal behavior).
+      e.stopPropagation();
+    },
+    updateStartTime: function() {
+      console.log("Event's start date", this.selectedEvent);
+      var itineraryItem = this.itineraryItems.filter(itineraryItem => {
+        console.log("i found this", itineraryItem.title === this.selectedEvent.title, "; ", this.selectedEvent);
+        return itineraryItem.title === this.selectedEvent.title;
+      });
+
+      console.log("Event's start date", this.selectedEvent.startDate + " " + this.selectedEvent.startTime);
+      var params = {
+        start_datetime: this.selectedEvent.startDate + " " + this.selectedEvent.startTime
+      };
+      axios.patch("/api/itinerary_items/" + this.selectedEvent.id, params).then(response => {
+        console.log("you updated the start time of this event");
+        this.selectedEvent = response.data;
+        //TODO: need to figure out how to update page without refreshing...
+      });
     }
   }
 };
