@@ -87,14 +87,18 @@
         editable-events
         :events="itineraryItems"
         class="vuecal--full-height-delete"
-        :min-date="minDate"
-        :max-date="maxDate"
+        :selected-date="trip.start_date"
+        :min-date="trip.start_date"
+        :max-date="trip.end_date"
+        @cell-click="selectedDate('cell-click', $event)"
+        @event-duration-change="durationChange('event-duration-change', $event)"
+        @event-delete="deleteEvent('event-delete', $event)"
       >
+        >
       </vue-cal>
       <!-- 
     <v-btn @click="customEventCreation">button</v-btn> -->
     </div>
-    <button v-on:click="getDirections('2019-06-01')" class="btn btn-primary">Get Directions</button>
     <!-- <div id="trip_steps">Directions: {{ getDirections() }}</div> -->
 
     <div id="map"></div>
@@ -207,6 +211,7 @@ export default {
       distance: "",
       AttractionId: "",
       newStartDateTime: "",
+      newEndDateTime: "",
       selectedEvent: {},
       showDialog: false,
       itineraryItems: [
@@ -229,33 +234,40 @@ export default {
           // contentFull: "Okay.<br>It will be a 18 hole golf course.", // Custom attribute.
           // class: "sport"
         }
-      ]
+      ],
+      currentSelectedDate: ""
     };
   },
   mounted: function() {
     axios.get("/api/trips/" + this.$route.params.id).then(response => {
       this.trip = response.data;
+      this.currentSelectedDate = this.trip.start_date;
 
       this.itineraryItems = this.trip.itinerary_items.map(item => {
         console.log("Itemmmm ", item);
-        let newItem = {};
+        let newItem = { id: item.id };
 
         let startDate = item.start_datetime.split("T")[0] + " " + item.start_datetime.split("T")[1];
         newItem["start"] = startDate;
 
-        var enddate = new Date(item.start_datetime);
-        enddate.setHours(enddate.getHours() + 2);
+        let formattedEndDate = "";
+        if (item.end_datetime == null) {
+          var enddate = new Date(item.start_datetime);
+          enddate.setHours(enddate.getHours() + 2);
 
-        let splitEndDate = enddate.toString("YYYY-M-D H:i").split(" ");
+          let splitEndDate = enddate.toString("YYYY-M-D H:i").split(" ");
 
-        let formattedEndDate =
-          splitEndDate[3] +
-          "-0" +
-          parseInt(enddate.getMonth() + 1) +
-          "-" +
-          splitEndDate[2] +
-          " " +
-          splitEndDate[4].slice(0, -3);
+          formattedEndDate =
+            splitEndDate[3] +
+            "-0" +
+            parseInt(enddate.getMonth() + 1) +
+            "-" +
+            splitEndDate[2] +
+            " " +
+            splitEndDate[4].slice(0, -3);
+        } else {
+          formattedEndDate = item.end_datetime;
+        }
 
         newItem["end"] = formattedEndDate;
         newItem["title"] = item["attraction_name"];
@@ -341,18 +353,18 @@ export default {
   //   setupTheme();
   // },
   computed: {
-    minDate() {
-      let now = new Date();
-      let date = new Date(now);
-      date.setDate(now.getDate() - 15);
-      return date;
-    },
-    maxDate() {
-      let now = new Date();
-      let date = new Date(now);
-      date.setDate(now.getDate() + 15);
-      return date;
-    }
+    // minDate() {
+    //   let now = new Date();
+    //   let date = new Date(now);
+    //   date.setDate(now.getDate() - 15);
+    //   return date;
+    // },
+    // maxDate() {
+    //   let now = new Date();
+    //   let date = new Date(now);
+    //   date.setDate(now.getDate() + 15);
+    //   return date;
+    // }
   },
   methods: {
     addAttractionToMap: function(attraction) {
@@ -385,13 +397,16 @@ export default {
       //   latlngs += lat + "," + lng + ";"
       //
       var latlngs = [];
+      var selectedDate = this.currentSelectedDate.split("T")[0];
       this.trip.itinerary_items.forEach(itineraryItem => {
-        if (true) {
+        var itineraryItemDate = itineraryItem.start_datetime.split(" ")[0].split("T")[0];
+        // if (this.currentSelectedDate === itineraryItem.start_datetime.split(" ")[0]) {
+        if (selectedDate === itineraryItemDate) {
           // change this to check if itineraryItem's date matches the inputDate
           latlngs.push(`${itineraryItem.center}`);
         }
       });
-      console.log(latlngs.join(";"));
+      console.log("WHAT'S GOING ON", inputDate, latlngs.join(";"));
       axios
         .get(
           `https://api.mapbox.com/directions/v5/mapbox/walking/${latlngs.join(
@@ -516,11 +531,36 @@ export default {
       };
       axios.post("/api/itinerary_items", params).then(response => {
         this.trip.itinerary_items.push(response.data);
+        this.itineraryItems.push(response.data);
         console.log(this.trip.itinerary_items);
         this.AttractionId = "";
         this.newStartDateTime = "";
         this.addAttractionToMap(response.data);
       });
+    },
+    durationChange: function(eventName, event) {
+      var itineraryItem = this.itineraryItems.filter(itineraryItem => {
+        return itineraryItem.title === event.title;
+      });
+      console.log("i found this", itineraryItem);
+      var params = {
+        end_datetime: event.end
+      };
+      axios.patch("/api/itinerary_items/" + event.id, params).then(response => {
+        console.log("you updated the end date of this event");
+        event = response.data;
+      });
+      console.log(eventName, ": ", event);
+    },
+    selectedDate: function(eventName, event) {
+      console.log(eventName, ": ", event);
+      let date = new Date(event);
+      let splitDate = date.toString("YYYY-M-D H:i").split(" ");
+
+      this.currentSelectedDate = splitDate[3] + "-0" + parseInt(date.getMonth() + 1) + "-" + splitDate[2];
+
+      console.log("Current selected date", this.currentSelectedDate);
+      this.getDirections(this.currentSelectedDate);
     }
   }
 };
