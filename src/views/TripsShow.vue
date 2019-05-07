@@ -42,9 +42,6 @@
           <div class="col text-center">
             <div class="trips">
               <div class="trips-show">
-                <h3>
-                  When a user clicks on a specific trip, this page will show the activities in that trip.
-                </h3>
                 <h2>{{ this.trip.name }}</h2>
                 <h2>Start Date: {{ this.trip.start_date }}</h2>
                 <h2>End Date: {{ this.trip.end_date }}</h2>
@@ -104,9 +101,11 @@
     <div id="map"></div>
     <div id="instructions">
       <div v-if="steps.length > 0">
-        <h3>Distance</h3>
+        <h4>Distance</h4>
         <p>{{ (distance / 1609.344).toFixed(2) }} miles</p>
-        <h3>Steps</h3>
+        <h4>Steps</h4>
+        <p>Approximately {{ ((distance / 1609.344) * 2250).toFixed(0) }} steps</p>
+        <h4>Walking Directions</h4>
         <ul>
           <li v-for="step in steps">{{ step }}</li>
         </ul>
@@ -561,6 +560,17 @@ export default {
 
       console.log("Current selected date", this.currentSelectedDate);
       this.getDirections(this.currentSelectedDate);
+    },
+    deleteEvent: function(eventName, event) {
+      var itineraryItem = this.itineraryItems.filter(itineraryItem => {
+        return itineraryItem.title === event.title;
+      });
+      var params = {};
+      axios.delete("/api/itinerary_items/" + event.id, params).then(response => {
+        console.log("you deleted this event");
+        event = response.data;
+      });
+      console.log(eventName, ": ", event);
     }
   }
 };
