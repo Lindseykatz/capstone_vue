@@ -85,7 +85,7 @@
         :time-to="24 * 60"
         hide-view-selector
         editable-events
-        :events="events"
+        :events="itineraryItems"
         class="vuecal--full-height-delete"
         :min-date="minDate"
         :max-date="maxDate"
@@ -209,25 +209,25 @@ export default {
       newStartDateTime: "",
       selectedEvent: {},
       showDialog: false,
-      events: [
+      itineraryItems: [
         {
           start: "2019-05-01 14:00",
-          end: "2019-05-01 18:00",
-          title: "Need to go shopping",
-          icon: "shopping_cart", // Custom attribute.
-          content: "Click to see my shopping list",
-          contentFull:
-            "My shopping list is rather long:<br><ul><li>Avocadoes</li><li>Tomatoes</li><li>Potatoes</li><li>Mangoes</li></ul>", // Custom attribute.
-          class: "leisure"
+          end: "2019-05-01 16:00",
+          title: "Need to go shopping"
+          // icon: "shopping_cart", // Custom attribute.
+          // content: "Click to see my shopping list",
+          // contentFull:
+          //   "My shopping list is rather long:<br><ul><li>Avocadoes</li><li>Tomatoes</li><li>Potatoes</li><li>Mangoes</li></ul>", // Custom attribute.
+          // class: "leisure"
         },
         {
           start: "2019-05-04 10:00",
-          end: "2019-05-04 15:00",
-          title: "Golf with John",
-          icon: "golf_course", // Custom attribute.
-          content: "Do I need to tell how many holes?",
-          contentFull: "Okay.<br>It will be a 18 hole golf course.", // Custom attribute.
-          class: "sport"
+          end: "2019-05-04 16:00",
+          title: "Golf with John"
+          // icon: "golf_course", // Custom attribute.
+          // content: "Do I need to tell how many holes?",
+          // contentFull: "Okay.<br>It will be a 18 hole golf course.", // Custom attribute.
+          // class: "sport"
         }
       ]
     };
@@ -235,6 +235,35 @@ export default {
   mounted: function() {
     axios.get("/api/trips/" + this.$route.params.id).then(response => {
       this.trip = response.data;
+
+      this.itineraryItems = this.trip.itinerary_items.map(item => {
+        console.log("Itemmmm ", item);
+        let newItem = {};
+
+        let startDate = item.start_datetime.split("T")[0] + " " + item.start_datetime.split("T")[1];
+        newItem["start"] = startDate;
+
+        var enddate = new Date(item.start_datetime);
+        enddate.setHours(enddate.getHours() + 2);
+
+        let splitEndDate = enddate.toString("YYYY-M-D H:i").split(" ");
+
+        let formattedEndDate =
+          splitEndDate[3] +
+          "-0" +
+          parseInt(enddate.getMonth() + 1) +
+          "-" +
+          splitEndDate[2] +
+          " " +
+          splitEndDate[4].slice(0, -3);
+
+        newItem["end"] = formattedEndDate;
+        newItem["title"] = item["attraction_name"];
+
+        console.log("New Item ", newItem);
+
+        return newItem;
+      });
       // console.log(this.trip);
       console.log(this.trip.itinerary_items);
       // console.log(this.trip.city_attractions);

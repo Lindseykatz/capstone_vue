@@ -29,11 +29,10 @@
                 <form v-on:submit.prevent="createTrip()">
                   <div>
                     <ul>
-                    <li> Trip Name:
+                    <li> Trip Name: </li>
                       <li>
                       <input type="text" v-model="newTripName" />
-                    </li>
-                    </li>
+                      </li>
                     <li> Trip Dates:
                     <div class="datepicker-trigger">
                       <input
