@@ -42,7 +42,24 @@
           <div class="col text-center">
             <div class="trips">
               <div class="trips-show">
-                <h2>{{ this.trip.name }}: {{ this.trip.start_date }} to {{ this.trip.end_date }}</h2>
+                <h2>
+                  {{ this.trip.name }}:
+                  {{
+                    this.trip.start_date.split("-")[1] +
+                      "-" +
+                      this.trip.start_date.split("-")[2] +
+                      "-" +
+                      this.trip.start_date.split("-")[0]
+                  }}
+                  to
+                  {{
+                    this.trip.end_date.split("-")[1] +
+                      "-" +
+                      this.trip.end_date.split("-")[2] +
+                      "-" +
+                      this.trip.end_date.split("-")[0]
+                  }}
+                </h2>
                 <!--                 <div v-for="itinerary_item in trip.itinerary_items">
                   <h3>Attraction: {{ itinerary_item.attraction_name }}</h3>
                   <p>Start Date & Time: {{ itinerary_item.start_datetime }}</p> -->
@@ -64,9 +81,8 @@
                     Start Date & Time:
                     <input type="datetime-local" v-model="newStartDateTime" />
                   </div>
-                  <input type="submit" value="Add to itinerary" />
+                  <input type="submit" class="btn btn-info" value="Add to itinerary" />
                 </form>
-                <!-- TODO: Add map out my itinerary -->
               </div>
             </div>
           </div>
@@ -90,10 +106,9 @@
         @event-delete="deleteEvent('event-delete', $event)"
         :on-event-click="onEventClick"
       >
-        > >
       </vue-cal>
 
-      <v-dialog v-model="showDialog">
+      <!--       <v-dialog v-model="showDialog">
         <v-card>
           <v-card-title>
             <strong>{{ selectedEvent.title }}</strong>
@@ -114,7 +129,50 @@
             </ul>
           </v-card-text>
         </v-card>
-      </v-dialog>
+      </v-dialog> -->
+
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="editEventModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <strong style="padding-right: 5px;">{{ selectedEvent.title }}</strong>
+              <span>
+                {{ selectedEvent.formattedStartDate }} from {{ selectedEvent.startTime }} to
+                {{ selectedEvent.endTime }}</span
+              >
+
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <ul>
+                <input type="text" v-model="selectedEvent.startDate" />
+                <button v-on:click="updateStartDate()">Update date</button>
+                <li></li>
+                <li>Starts at:</li>
+                <input type="text" v-model="selectedEvent.startTime" />
+                <button v-on:click="updateStartTime()">Update start time</button>
+                <li>Ends at:</li>
+                <input type="text" v-model="selectedEvent.endTime" />
+                <button v-on:click="updateEndTime()">Update end time</button>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <!--               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button> -->
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- 
     <v-btn @click="customEventCreation">button</v-btn> -->
     </div>
@@ -224,6 +282,27 @@
 .duration {
   font-size: 2em;
 }
+
+.vuecal__event {
+  cursor: pointer;
+}
+
+.vuecal__event-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 4px 0 8px;
+}
+
+.vuecal__event-time {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.vuecal__event-content {
+  font-style: italic;
+}
 </style>
 
 <script>
@@ -239,14 +318,14 @@ export default {
     return {
       map: null,
       mapboxClient: null,
-      trip: {},
+      trip: { itinerary_items: [], start_date: "", end_date: "" },
       steps: [],
       distance: "",
       AttractionId: "",
       newStartDateTime: "",
       newEndDateTime: "",
       selectedEvent: {},
-      showDialog: false,
+      // showDialog: false,
       itineraryItems: [
         {
           start: "2019-05-01 14:00",
@@ -280,7 +359,9 @@ export default {
         console.log("Itemmmm ", item);
         let newItem = { id: item.id };
 
+        console.log("BEGIN FFFFFFF", item.start_datetime);
         let startTimeDate = item.start_datetime.split("T")[0] + " " + item.start_datetime.split("T")[1];
+        console.log("FFFFFFFFF", startTimeDate);
         newItem["start"] = startTimeDate;
 
         let formattedEndDate = "";
@@ -288,7 +369,9 @@ export default {
           var enddate = new Date(item.start_datetime);
           enddate.setHours(enddate.getHours() + 2);
 
+          console.log("BEGIN UUUUUUUU", enddate.toString("YYYY-M-D H:i"));
           let splitEndDate = enddate.toString("YYYY-M-D H:i").split(" ");
+          console.log("UUUUUUUUU", splitEndDate);
 
           formattedEndDate =
             splitEndDate[3] +
@@ -422,7 +505,7 @@ export default {
         });
     },
     getDirections: function(inputDate) {
-      console.log(this.trip.itinerary_items);
+      console.log("getDirections", this.trip.itinerary_items);
       // write a loop through this.trip.itinerary_items
       // build a string of lat/longs in this format:
       // var latlngs = ""
@@ -608,8 +691,11 @@ export default {
       console.log(eventName, ": ", event);
     },
     onEventClick(event, e) {
+      console.log("On click event ", event);
       this.selectedEvent = event;
-      this.showDialog = true;
+      this.selectedEvent.formattedStartDate = this.formatDate(event.startDate);
+      $("#editEventModal").modal("show");
+      // this.showDialog = true;
 
       e.stopPropagation();
     },
@@ -624,6 +710,7 @@ export default {
       axios.patch("/api/itinerary_items/" + this.selectedEvent.id, params).then(response => {
         console.log("you updated the start time of this event");
         this.selectedEvent = response.data;
+        location.reload(true);
         //TODO: need to figure out how to update page without refreshing...
       });
     },
@@ -638,6 +725,7 @@ export default {
       axios.patch("/api/itinerary_items/" + this.selectedEvent.id, params).then(response => {
         console.log("you updated the end time of this event");
         this.selectedEvent = response.data;
+        location.reload(true);
         // TODO: need to figure out how to update page without refreshing...
       });
     },
@@ -653,8 +741,15 @@ export default {
       axios.patch("/api/itinerary_items/" + this.selectedEvent.id, params).then(response => {
         console.log("you updated the start date of this event");
         this.selectedEvent = response.data;
+        location.reload(true);
         // TODO: need to figure out how to update page without refreshing...
       });
+    },
+    formatDate: function(date) {
+      console.log(date);
+      var splitDate = date.split("-");
+      var formattedDate = splitDate[1] + "-" + splitDate[2] + "-" + splitDate[0];
+      return formattedDate;
     }
   }
 };

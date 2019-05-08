@@ -73,20 +73,24 @@
                   </li>
                 </ul>
                                   </div>
-                  <input type="submit" value=" Create new trip " />
+                  <input type="submit" class="btn btn-info" value=" Create new trip " />
 
                 </form>
                 <h3>Trips:</h3>
-                  <div v-for="trip in trips">
+                  <div>
                     <div class="card-deck" >
-                      <div class="card mb-4">
-                        <img class="card-img-top" v-if="trip.city_id === 1" src="chicago.jpg" alt="Card image cap" />
+                      <div class="card mb-4" v-for="trip in trips">
+                        <img class="card-img-top" v-if="trip.city_id === 1" src="chicago.jpg" alt="Card image cap" style="min-height: 354px;"/>
                         <img class="card-img-top" v-if="trip.city_id === 2" src="barcelona.jpg" alt="Card image cap" />
                         <div class="card-text">
                           <router-link v-bind:to="`/trips/${trip.id}`"> {{ trip.name }}</router-link>
                         <p class="card-text">
-                          <ul>City: {{ trip.city }}</ul>
-                          <ul>From: {{ trip.start_date }} to {{ trip.end_date }}</ul>
+                          <ul>{{ trip.city }}</ul>
+                          <ul>
+                              {{ trip.start_date.split("-")[1] + "-" + trip.start_date.split("-")[2] + "-" + trip.start_date.split("-")[0] }} 
+                              to 
+                              {{ trip.end_date.split("-")[1] + "-" + trip.end_date.split("-")[2] + "-" + trip.end_date.split("-")[0] }}
+                          </ul>
                         </p>
                       </div>
                     </div>

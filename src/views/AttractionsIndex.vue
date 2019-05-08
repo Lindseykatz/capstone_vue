@@ -27,12 +27,13 @@
         <div class="row">
           <div class="col text-center">
             <div class="attractions-index">
+              <br />
               <h5>
                 Search for a city:
               </h5>
               <div>
-                <input type="text" placeholder="Search" v-model="cityFilter" />
-                <button v-on:click="runSearch()">Submit</button>
+                <input type="text" style="margin-right:10px;" placeholder="Search" v-model="cityFilter" />
+                <button v-on:click="runSearch()" class="btn btn-info">Submit</button>
               </div>
               <div v-for="attraction in filteredAttractions">
                 <h2>{{ attraction.name }}</h2>
