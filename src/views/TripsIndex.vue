@@ -73,14 +73,17 @@
                   </li>
                 </ul>
                                   </div>
+                                  <br>
                   <input type="submit" class="btn btn-info" value=" Create new trip " />
 
                 </form>
+                <br>
                 <h3>Trips:</h3>
                   <div>
                     <div class="card-deck" >
                       <div class="card mb-4" v-for="trip in trips">
                         <img class="card-img-top" v-if="trip.city_id === 1" src="chicago.jpg" alt="Card image cap" style="min-height: 354px;"/>
+                        <!-- TODO: Make it so that these images match -->
                         <img class="card-img-top" v-if="trip.city_id === 2" src="barcelona.jpg" alt="Card image cap" />
                         <div class="card-text">
                           <router-link v-bind:to="`/trips/${trip.id}`"> {{ trip.name }}</router-link>

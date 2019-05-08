@@ -83,6 +83,7 @@
                   </div>
                   <input type="submit" class="btn btn-info" value="Add to itinerary" />
                 </form>
+                <br />
               </div>
             </div>
           </div>
@@ -330,21 +331,21 @@ export default {
         {
           start: "2019-05-01 14:00",
           end: "2019-05-01 16:00",
-          title: "Need to go shopping"
+          title: "Need to go shopping",
           // icon: "shopping_cart", // Custom attribute.
           // content: "Click to see my shopping list",
           // contentFull:
           //   "My shopping list is rather long:<br><ul><li>Avocadoes</li><li>Tomatoes</li><li>Potatoes</li><li>Mangoes</li></ul>", // Custom attribute.
-          // class: "leisure"
+          class: "leisure"
         },
         {
           start: "2019-05-04 10:00",
           end: "2019-05-04 16:00",
-          title: "Golf with John"
+          title: "Golf with John",
           // icon: "golf_course", // Custom attribute.
           // content: "Do I need to tell how many holes?",
           // contentFull: "Okay.<br>It will be a 18 hole golf course.", // Custom attribute.
-          // class: "sport"
+          class: "sport"
         }
       ],
       currentSelectedDate: ""

@@ -26,7 +26,7 @@
           <div class="col text-center">
             <div class="attractions-show">
               <h2>{{ this.attraction.name }}</h2>
-              <img v-bind:src="this.attraction.main_image_url" v-bind:alt="attraction.name" />
+              <img v-bind:src="this.attraction.main_image_url" class="attractions-img" v-bind:alt="attraction.name" />
               <p>
                 Address: {{ this.attraction.street_address }}, {{ this.attraction.city_name }},
                 {{ this.attraction.state }} {{ this.attraction.country }} {{ this.attraction.postal_code }}
@@ -39,15 +39,17 @@
 
                 <!-- <input type="text" placeholder="Enter a valid trip id" v-model="tripId"> -->
                 <select v-model="tripId">
-                  <option value="" disabled="disabled" selected="selected"> Choose itinerary</option>
+                  <option value="" disabled="disabled" style="margin-right:10px;" selected="selected">
+                    Choose itinerary</option
+                  >
                   <option v-for="trip in attraction.user_trips" v-bind:value="trip.id"
                     >{{ trip.trip_name }}: {{ trip.start_date }} to {{ trip.end_date }}
                   </option>
                 </select>
 
-                <input type="datetime-local" v-model="startDateTime" />
+                <input type="datetime-local" style="margin-right:10px;" v-model="startDateTime" />
 
-                <button v-on:click="addItineraryItem()">Add to my itinerary</button>
+                <button v-on:click="addItineraryItem()" class="btn btn-info">Add to my itinerary</button>
               </div>
               <a
                 v-if="attraction.city_id === 1"

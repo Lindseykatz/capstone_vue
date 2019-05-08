@@ -1375,3 +1375,8 @@ section
 .card-deck .card:not(:first-child) {
     margin-left: 15px;
 }
+
+.attractions-img {
+	max-width:950px;
+	width:auto;
+}

@@ -37,7 +37,7 @@
               </div>
               <div v-for="attraction in filteredAttractions">
                 <h2>{{ attraction.name }}</h2>
-                <img v-bind:src="attraction.main_image_url" width="300" height="200" v-bind:alt="attraction.name" />
+                <img v-bind:src="attraction.main_image_url" width="300px" height="200px" v-bind:alt="attraction.name" />
                 <p>
                   Address: {{ attraction.street_address }}, {{ attraction.city_name }}, {{ attraction.state }}
                   {{ attraction.country }} {{ attraction.postal_code }}
