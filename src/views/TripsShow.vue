@@ -157,15 +157,25 @@
             </div>
             <div class="modal-body">
               <ul>
+                <li>Date:</li>
                 <input type="text" v-model="selectedEvent.startDate" />
-                <button v-on:click="updateStartDate()">Update date</button>
+                <button class="btn btn-success" style="margin-left:10px;" v-on:click="updateStartDate()">
+                  Update date
+                </button>
                 <li></li>
                 <li>Starts at:</li>
                 <input type="text" v-model="selectedEvent.startTime" />
-                <button v-on:click="updateStartTime()">Update start time</button>
+                <button class="btn btn-success" style="margin-left:10px;" v-on:click="updateStartTime()">
+                  Update start time
+                </button>
                 <li>Ends at:</li>
                 <input type="text" v-model="selectedEvent.endTime" />
-                <button v-on:click="updateEndTime()">Update end time</button>
+                <button class="btn btn-success" style="margin-left:10px;" v-on:click="updateEndTime()">
+                  Update end time
+                </button>
+                <br />
+                <br />
+                <button class="btn btn-danger" v-on:click="deleteEvent()">Delete</button>
               </ul>
             </div>
             <div class="modal-footer">
@@ -680,16 +690,17 @@ export default {
       console.log("Current selected date", this.currentSelectedDate);
       this.getDirections(this.currentSelectedDate);
     },
-    deleteEvent: function(eventName, event) {
+    deleteEvent: function() {
       var itineraryItem = this.itineraryItems.filter(itineraryItem => {
-        return itineraryItem.title === event.title;
+        return itineraryItem.title === this.selectedEvent.title;
       });
       var params = {};
-      axios.delete("/api/itinerary_items/" + event.id, params).then(response => {
+      axios.delete("/api/itinerary_items/" + this.selectedEvent.id, params).then(response => {
         console.log("you deleted this event");
-        event = response.data;
+        this.selectedEvent = response.data;
+        location.reload(true);
       });
-      console.log(eventName, ": ", event);
+      console.log(this.selectedEvent, ": ", event);
     },
     onEventClick(event, e) {
       console.log("On click event ", event);
