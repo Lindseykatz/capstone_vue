@@ -15,8 +15,8 @@
       </div>
     </div>
     <!-- TODO: current have to refresh the page for this to work - fix this!  -->
+    <!-- v-if="trip.city_id === 1" -->
     <a
-      v-if="trip.city_id === 1"
       class="weatherwidget-io"
       href="https://forecast7.com/en/41d88n87d63/chicago/?unit=us"
       data-label_1="CHICAGO"
@@ -25,7 +25,7 @@
       data-theme="original"
       >CHICAGO WEATHER</a
     >
-    <a
+    <!--     <a
       v-if="trip.city_id === 2"
       class="weatherwidget-io"
       href="https://forecast7.com/en/41d392d17/barcelona/"
@@ -34,7 +34,7 @@
       data-icons="Climacons Animated"
       data-theme="original"
       >BARCELONA WEATHER</a
-    >
+    > -->
 
     <div class="about">
       <div class="container">
@@ -93,11 +93,12 @@
     <div class="row about_row"></div>
     <div class="schedule">
       <vue-cal
-        :time-from="0 * 60"
+        :time-from="6 * 60"
         :time-to="24 * 60"
         hide-view-selector
         editable-events
         :events="itineraryItems"
+        style="padding-left: 200px; padding-right: 200px"
         class="vuecal--full-height-delete"
         :selected-date="trip.start_date"
         :min-date="trip.start_date"
@@ -186,6 +187,7 @@
         <p>{{ (distance / 1609.344).toFixed(2) }} miles</p>
         <h4>Steps</h4>
         <p>Approximately {{ ((distance / 1609.344) * 2250).toFixed(0) }} steps</p>
+        <br />
         <h4>Walking Directions</h4>
         <ul>
           <li v-for="step in steps">{{ step }}</li>
@@ -304,6 +306,22 @@
 .vuecal__event-content {
   font-style: italic;
 }
+
+.vuecal__event.restaurants {
+  background-color: rgba(253, 156, 66, 0.9);
+  border: 1px solid rgb(233, 136, 46);
+  color: #fff;
+}
+
+.vuecal__event.sport {
+  background-color: rgba(164, 230, 210, 0.9);
+  border: 1px solid rgb(144, 210, 190);
+}
+.vuecal__event.sights {
+  background-color: rgba(255, 102, 102, 0.9);
+  border: 1px solid rgb(235, 82, 82);
+  color: #fff;
+}
 </style>
 
 <script>
@@ -327,27 +345,7 @@ export default {
       newEndDateTime: "",
       selectedEvent: {},
       // showDialog: false,
-      itineraryItems: [
-        {
-          start: "2019-05-01 14:00",
-          end: "2019-05-01 16:00",
-          title: "Need to go shopping",
-          // icon: "shopping_cart", // Custom attribute.
-          // content: "Click to see my shopping list",
-          // contentFull:
-          //   "My shopping list is rather long:<br><ul><li>Avocadoes</li><li>Tomatoes</li><li>Potatoes</li><li>Mangoes</li></ul>", // Custom attribute.
-          class: "leisure"
-        },
-        {
-          start: "2019-05-04 10:00",
-          end: "2019-05-04 16:00",
-          title: "Golf with John",
-          // icon: "golf_course", // Custom attribute.
-          // content: "Do I need to tell how many holes?",
-          // contentFull: "Okay.<br>It will be a 18 hole golf course.", // Custom attribute.
-          class: "sport"
-        }
-      ],
+      itineraryItems: [],
       currentSelectedDate: ""
     };
   },
@@ -388,6 +386,7 @@ export default {
 
         newItem["end"] = formattedEndDate;
         newItem["title"] = item["attraction_name"];
+        newItem["class"] = item["category_name"];
 
         console.log("New Item ", newItem);
 
@@ -496,7 +495,7 @@ export default {
             var feature = response.body.features[0];
             var marker = new mapboxgl.Marker().setLngLat(feature.center).addTo(this.map);
             attraction.center = feature.center;
-            var popup = new mapboxgl.Popup({ offset: 25 }).setText(attraction.name);
+            var popup = new mapboxgl.Popup({ offset: 25 }).setText(attraction.attraction_name);
             new mapboxgl.Marker()
               .setLngLat(feature.center)
               .setPopup(popup) // sets a popup on this marker

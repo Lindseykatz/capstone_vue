@@ -51,8 +51,8 @@
 
                 <button v-on:click="addItineraryItem()" class="btn btn-info">Add to my itinerary</button>
               </div>
+              <!-- v-if="trip.city_id === 1" -->
               <a
-                v-if="attraction.city_id === 1"
                 class="weatherwidget-io"
                 href="https://forecast7.com/en/41d88n87d63/chicago/?unit=us"
                 data-label_1="CHICAGO"
@@ -61,16 +61,17 @@
                 data-theme="original"
                 >CHICAGO WEATHER</a
               >
-              <a
-                v-if="attraction.city_id === 2"
-                class="weatherwidget-io"
-                href="https://forecast7.com/en/41d392d17/barcelona/"
-                data-label_1="BARCELONA"
-                data-label_2="WEATHER"
-                data-icons="Climacons Animated"
-                data-theme="original"
-                >BARCELONA WEATHER</a
-              >
+              <!--     <a
+      v-if="trip.city_id === 2"
+      class="weatherwidget-io"
+      href="https://forecast7.com/en/41d392d17/barcelona/"
+      data-label_1="BARCELONA"
+      data-label_2="WEATHER"
+      data-icons="Climacons Animated"
+      data-theme="original"
+      >BARCELONA WEATHER</a
+    > -->
+
               <!-- TODO: Add users' comments and pictures -->
               <!-- TODO: Add button to add this attraction to my itinerary. Must be logged in in order for this button to work. -->
             </div>

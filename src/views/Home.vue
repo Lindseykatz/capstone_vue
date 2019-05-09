@@ -63,18 +63,21 @@
               <div class="home_search_title">Search for your trip</div>
               <div class="home_search_content">
                 <div class="d-flex flex-lg-row align-items-start justify-content-lg-between justify-content-start">
-                  City:
-                  <input type="text" class="search_input search_input_1" placeholder="Enter city" required="required" />
-                  <button v-on:click="`/attractions`" class="attraction_search_button">
-                    search attractions
-                  </button>
+                  <div>
+                    <h4>City:</h4>
+                    <input type="text" placeholder="Enter city" style="margin-right:20px; " required="required" />
+                    <button v-on:click="`/attractions`" class="btn btn-info">
+                      search attractions
+                    </button>
+                  </div>
                   <!-- TODO: Take you to Attractions page where the city is searched -->
                   <div class="datepicker-trigger">
-                    Dates:
+                    <h4>Dates:</h4>
                     <input
                       type="text"
                       id="datepicker-trigger"
                       placeholder="Select dates"
+                      style="margin-right:20px;"
                       :value="formatDates(dateOne, dateTwo)"
                     />
 
@@ -95,8 +98,9 @@
                         }
                       "
                     />
+                    <button class="btn btn-info">create itinerary</button>
                   </div>
-                  <button class="itinerary_search_button">create itinerary</button>
+
                   <!-- TODO: Take you to the Itinerary create page where the city is already created -->
                 </div>
               </div>

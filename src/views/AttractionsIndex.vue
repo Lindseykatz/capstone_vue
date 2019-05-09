@@ -33,7 +33,9 @@
               </h5>
               <div>
                 <input type="text" style="margin-right:10px;" placeholder="Search" v-model="cityFilter" />
-                <button v-on:click="runSearch()" class="btn btn-info">Submit</button>
+                <button v-on:click="runSearch()" style="margin-right:10px;" class="btn btn-info">
+                  Search
+                </button>
               </div>
               <div v-for="attraction in filteredAttractions">
                 <h2>{{ attraction.name }}</h2>

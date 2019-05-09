@@ -82,7 +82,7 @@
                   <div>
                     <div class="card-deck" >
                       <div class="card mb-4" v-for="trip in trips">
-                        <img class="card-img-top" v-if="trip.city_id === 1" src="chicago.jpg" alt="Card image cap" style="min-height: 354px;"/>
+                        <img class="card-img-top" v-if="trip.city_id === 1" src="chicago.jpg" alt="Card image cap" />
                         <!-- TODO: Make it so that these images match -->
                         <img class="card-img-top" v-if="trip.city_id === 2" src="barcelona.jpg" alt="Card image cap" />
                         <div class="card-text">
