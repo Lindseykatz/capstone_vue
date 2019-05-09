@@ -15,26 +15,26 @@
       </div>
     </div>
     <!-- TODO: current have to refresh the page for this to work - fix this!  -->
-    <!-- v-if="trip.city_id === 1" -->
+    <!--                   v-if="trip.city_id === 1"
+              <a
+                class="weatherwidget-io"
+                href="https://forecast7.com/en/41d88n87d63/chicago/?unit=us"
+                data-label_1="CHICAGO"
+                data-label_2="WEATHER"
+                data-icons="Climacons Animated"
+                data-theme="original"
+                >CHICAGO WEATHER</a
+              > -->
+    <!--              v-if="trip.city_id === 2" -->
     <a
       class="weatherwidget-io"
-      href="https://forecast7.com/en/41d88n87d63/chicago/?unit=us"
-      data-label_1="CHICAGO"
-      data-label_2="WEATHER"
-      data-icons="Climacons Animated"
-      data-theme="original"
-      >CHICAGO WEATHER</a
-    >
-    <!--     <a
-      v-if="trip.city_id === 2"
-      class="weatherwidget-io"
-      href="https://forecast7.com/en/41d392d17/barcelona/"
+      href="https://forecast7.com/en/41d392d17/barcelona/?unit=us"
       data-label_1="BARCELONA"
       data-label_2="WEATHER"
       data-icons="Climacons Animated"
       data-theme="original"
       >BARCELONA WEATHER</a
-    > -->
+    >
 
     <div class="about">
       <div class="container">
@@ -404,7 +404,7 @@ export default {
       var map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [-87.6244, 41.8756],
+        center: [2.1734, 41.3851],
         zoom: 13
       });
       this.map = map;
@@ -652,6 +652,7 @@ export default {
         this.AttractionId = "";
         this.newStartDateTime = "";
         this.addAttractionToMap(response.data);
+        location.reload(true);
       });
     },
     durationChange: function(eventName, event) {
