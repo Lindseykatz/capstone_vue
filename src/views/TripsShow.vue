@@ -196,7 +196,7 @@
         <h4>Distance</h4>
         <p>{{ (distance / 1609.344).toFixed(2) }} miles</p>
         <h4>Steps</h4>
-        <p>Approximately {{ ((distance / 1609.344) * 2250).toFixed(0) }} steps</p>
+        <p>Approximately {{ ((distance / 1609.344) * 2400).toFixed(0) }} steps</p>
         <br />
         <h4>Walking Directions</h4>
         <ul>
